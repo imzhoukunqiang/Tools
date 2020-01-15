@@ -190,6 +190,7 @@ var $$ = document.querySelectorAll.bind(document);
     link.href = 'https://www.baidu.com/favicon.ico';
     document.getElementsByTagName('head')[0].appendChild(link);
     document.addEventListener('DOMContentLoaded', function () { status = 'complete' });
+    document.title = document.title.replace(/google/i,'Baidu');
 
     function run() {
         logoToBaidu();
