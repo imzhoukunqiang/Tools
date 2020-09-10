@@ -170,6 +170,7 @@
 // @match        *://www.google.com.cu/*
 // @match        *://www.google.com.jm/*
 // @match        *://www.google.ht/*
+// @match        *://cn.bing.com/*
 // @grant        GM_log
 // @run-at document-start
 // ==/UserScript==
@@ -182,44 +183,62 @@ var $$ = document.querySelectorAll.bind(document);
 (function() {
     'use strict';
 
-    let searchKeyMap={'google':'q'};
+    let searchKeyMap =
+        {
+            "google": {
+                "searchKey": "q",
+                "selector": ".gLFyf.gsfi"
+            },
+            "bing": {
+                "searchKey": "q",
+                "selector": "#sb_form_q"
+            },
+            "unknown":{
+                "searchKey": "q",
+                "selector": "#unknown___unknown"
+            }
+        }
+    ;
 
 
-    function run(){
+    function run(domain){
         let params = parseUrlParams(location.search);
-        let searchStr = params[searchKeyMap.google];
+        let searchStr = params[searchKeyMap[domain].searchKey];
         document.searchStr = searchStr;
         console.info(searchStr);
         if(!searchStr){
             return;
         }
         if(!/-.+$/.test(searchStr)){
-            //改变参数重新请求
             searchStr+='+-csdn';
-            params[searchKeyMap.google] = searchStr;
+            params[searchKeyMap[domain].searchKey] = searchStr;
             let search = encodeToUrlStr(params);
             location.search = search;
         }else{
             //隐藏
             document.addEventListener('DOMContentLoaded', function () {
                 searchValue(searchValue().replace(/ -.+$/,''));
-              /*  $('.gLFyf.gsfi').oninput=function(e){
-                    searchValue(searchValue().replace(/ -.+$/,''));
-                }
-                */
 
             });
 
         }
     }
+    function runBing(){
+        run('bing');
+    }
+
+    function runGoogle(){
+       run('google');
+    }
 
 
 
     function searchValue(value){
+        let selectorStr = searchKeyMap[chooseDomain().name].selector;
         if(value){
-            $('.gLFyf.gsfi').value= value;
+            $(selectorStr).value= value;
         }else{
-            return $('.gLFyf.gsfi').value;
+            return $(selectorStr).value;
         }
     }
 
@@ -259,6 +278,19 @@ var $$ = document.querySelectorAll.bind(document);
         return result.substring(0,result.length-1);
     }
 
-    run();
+    function chooseDomain(){
+        if(location.host.includes('bing')){
+            return {name:'bing',run: runBing};
+        }
+        if(location.host.includes('google')){
+            return {name:'google',run: runGoogle};
+        }
+        return {name:'unknown',run:function(){}};
+        console.log()
+    }
+    //start......
+    chooseDomain().run();
     // Your code here...
+
+
 })();
