@@ -1,7 +1,7 @@
 
 // ==UserScript==
 // @name         Search Tools
-// @namespace    https://github.com/imzhoukunqiang/mySettingsAndJars/blob/master/SearchTools.js
+// @namespace    https://raw.githubusercontent.com/imzhoukunqiang/Tools/master/others/tampermonky/SearchTools.js
 // @version      0.1
 // @description  help you to search better！
 // @author       zhou
